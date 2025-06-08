@@ -1,6 +1,7 @@
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { Participants } from './participants/participants.entity';
+import { ParticipantsModule } from './participants/participants.module';
 import { Room } from './room/room.entity';
 import { RoomModule } from './room/room.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,6 +22,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
     }),
     RoomModule,
+    ParticipantsModule,
   ],
 })
 export class AppModule {}
