@@ -15,7 +15,7 @@ export class Preference {
   participant_id: string;
   @PrimaryColumn('uuid')
   food_id: string;
-  @ManyToOne(() => Participants, (participant) => participant.preference, {
+  @ManyToOne(() => Participants, (participant) => participant.preferences, {
     onDelete: 'CASCADE',
   })
   participant: Participants;
