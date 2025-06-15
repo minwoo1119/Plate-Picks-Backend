@@ -3,9 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { Preference } from 'src/preference/preference.entity';
 import { Room } from '../room/room.entity';
 
 @Entity()
@@ -26,4 +28,7 @@ export class Participants {
 
   @Column({ default: false })
   completed: boolean;
+
+  @OneToMany(() => Preference, (preference) => preference.participant)
+  preference: Preference[];
 }
