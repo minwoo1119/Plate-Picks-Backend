@@ -3,6 +3,7 @@ import { Participants } from './participants.entity';
 import { Repository } from 'typeorm';
 import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { Room } from 'src/room/room.entity';
+import { GetParticipantsDto } from './dto/get-participant-info.dto';
 
 export class ParticipantsService {
   constructor(
@@ -28,5 +29,23 @@ export class ParticipantsService {
     });
 
     return this.participantsRepository.save(participant);
+  }
+
+  async getParticipantsInfo(
+    participantId: string,
+  ): Promise<GetParticipantsDto> {
+    const participant = await this.participantsRepository.findOne({
+      where: { id: participantId },
+    });
+
+    if (!participant) {
+      throw new Error('Participant Not Found');
+    }
+
+    return {
+      participantId: participant.id,
+      name: participant.name,
+      completed: participant.completed,
+    };
   }
 }
