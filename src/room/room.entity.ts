@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Participants } from 'src/participants/participants.entity';
+import { Participants } from '../participants/participants.entity';
 
 @Entity()
 export class Room {

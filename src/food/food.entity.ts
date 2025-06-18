@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { Preference } from 'src/preference/preference.entity';
+import { Preference } from '../preference/preference.entity';
 
 @Entity()
 export class Food {
