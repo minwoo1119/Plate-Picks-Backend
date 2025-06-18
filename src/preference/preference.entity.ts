@@ -7,8 +7,8 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 
-import { Food } from 'src/food/food.entity';
-import { Participants } from 'src/participants/participants.entity';
+import { Food } from '../food/food.entity';
+import { Participants } from '../participants/participants.entity';
 
 @Entity()
 export class Preference {
