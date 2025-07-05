@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: plate-picks-backend
+    ports:
+      - '7777:3000'
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: your_password
+      DB_NAME: plate_picks
+    volumes:
+      - .:/app
+    networks:
+      - plate-net
+
+  db:
+    image: mysql:8.0
+    container_name: plate-picks-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: your_password
+      MYSQL_DATABASE: plate_picks
+    ports:
+      - '3308:3306'
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - plate-net
+
+volumes:
+  dbdata:
+
+networks:
+  plate-net:
