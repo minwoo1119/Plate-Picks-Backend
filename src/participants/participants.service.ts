@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { Room } from 'src/room/room.entity';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
+import { completeParticipantsDto } from './dto/complete-participants.dto';
 
 export class ParticipantsService {
   constructor(
@@ -45,6 +46,26 @@ export class ParticipantsService {
     return {
       participantId: participant.id,
       name: participant.name,
+      completed: participant.completed,
+    };
+  }
+
+  async completeParticipant(
+    participantId: string,
+  ): Promise<completeParticipantsDto> {
+    const participant = await this.participantsRepository.findOneBy({
+      id: participantId,
+    });
+
+    if (!participant) {
+      throw new Error('No participants found');
+    }
+
+    participant.completed = true;
+    await this.participantsRepository.save(participant);
+
+    return {
+      participantId: participant.id,
       completed: participant.completed,
     };
   }
