@@ -5,15 +5,11 @@ services:
     build: .
     container_name: plate-picks-backend
     ports:
-      - '7777:3000'
+      - '${PORT}:${PORT}'
     depends_on:
       - db
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_USERNAME: root
-      DB_PASSWORD: your_password
-      DB_NAME: plate_picks
+    env_file:
+      - .env
     networks:
       - plate-net
 
@@ -22,17 +18,19 @@ services:
     container_name: plate-picks-db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: your_password
-      MYSQL_DATABASE: plate_picks
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - '3308:3306'
     volumes:
-      - dbdata:/var/lib/mysql
+      - platepicks_mysql_data:/var/lib/mysql
     networks:
       - plate-net
 
 volumes:
-  dbdata:
+  platepicks_mysql_data:
 
 networks:
   plate-net:
