@@ -24,4 +24,9 @@ export class RoomController {
   async getRoomStatus(@Param('code') code: string) {
     return this.roomService.getRoomStatus(code);
   }
+
+  @Get('participants')
+  async getAllParticipants(@Param('code') code: string) {
+    return this.roomService.getRoomParticipants(code);
+  }
 }
