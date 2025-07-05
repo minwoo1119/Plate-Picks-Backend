@@ -9,6 +9,7 @@ import {
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
+import { completeParticipantsDto } from './dto/complete-participants.dto';
 
 @Controller('participants')
 export class ParticipantsController {
@@ -36,5 +37,17 @@ export class ParticipantsController {
       throw new NotFoundException('Participant not found');
     }
     return participantInfo;
+  }
+
+  @Get('complete/:participantId')
+  async completeParticipants(
+    @Param('participantId') participantId: string,
+  ): Promise<completeParticipantsDto> {
+    const participant =
+      await this.participantsService.completeParticipant(participantId);
+    return {
+      participantId: participant.participantId,
+      completed: participant.completed,
+    };
   }
 }
