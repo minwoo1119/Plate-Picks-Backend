@@ -47,4 +47,17 @@ export class RoomService {
       all_completed: total === joined && total === completed,
     };
   }
+
+  async getRoomParticipants(code: string) {
+    const room = await this.roomRepository.findOne({
+      where: { code },
+      relations: ['participants'],
+    });
+
+    if (!room) {
+      throw new NotFoundException(`Room with code ${code} not found`);
+    }
+
+    return room.participants;
+  }
 }

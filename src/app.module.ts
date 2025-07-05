@@ -13,7 +13,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // ✅ 반드시 설정
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
