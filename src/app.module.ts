@@ -8,6 +8,7 @@ import { Preference } from './preference/preference.entity';
 import { PreferenceModule } from './preference/preference.module';
 import { Room } from './room/room.entity';
 import { RoomModule } from './room/room.module';
+import { SseModule } from './sse/sse.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -29,6 +30,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ParticipantsModule,
     FoodModule,
     PreferenceModule,
+    SseModule,
   ],
 })
 export class AppModule {}
