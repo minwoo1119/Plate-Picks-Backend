@@ -4,5 +4,5 @@ export class CreateParticipantsDto {
   @IsString()
   name: string;
   @IsString()
-  roomCode: string;
+  roomId: string;
 }

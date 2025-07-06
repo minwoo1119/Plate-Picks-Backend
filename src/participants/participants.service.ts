@@ -17,7 +17,7 @@ export class ParticipantsService {
 
   async setParticipant(dto: CreateParticipantsDto): Promise<Participants> {
     const room = await this.roomRepository.findOne({
-      where: { code: dto.roomCode },
+      where: { id: dto.roomId },
     });
 
     if (!room) {
