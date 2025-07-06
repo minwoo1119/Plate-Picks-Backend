@@ -6,6 +6,7 @@ import { Room } from 'src/room/room.entity';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
 import { completeParticipantsDto } from './dto/complete-participants.dto';
 import { BadRequestException } from '@nestjs/common';
+import { SseService } from 'src/sse/sse.service';
 
 export class ParticipantsService {
   constructor(
@@ -14,6 +15,8 @@ export class ParticipantsService {
 
     @InjectRepository(Room)
     private readonly roomRepository: Repository<Room>,
+
+    private readonly sseService: SseService,
   ) {}
 
   async setParticipant(dto: CreateParticipantsDto): Promise<Participants> {
@@ -72,6 +75,12 @@ export class ParticipantsService {
 
     participant.completed = true;
     await this.participantsRepository.save(participant);
+
+    const roomId = participant.room.id;
+    this.sseService.notify(roomId, {
+      type: 'participant-completed',
+      participantId: participant.id,
+    });
 
     return {
       participantId: participant.id,
