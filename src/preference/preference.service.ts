@@ -4,11 +4,18 @@ import { Repository } from 'typeorm';
 import { FoodRatingSummaryDto } from './dto/food-rating-summary';
 import { ResultFoodDto } from './dto/result-food.dto';
 import { Food } from 'src/food/food.entity';
+import { SubmitPreferenceDto } from './dto/create-preference.dto';
+import { NotFoundException } from '@nestjs/common';
+import { Participants } from 'src/participants/participants.entity';
 
 export class PreferenceService {
   constructor(
     @InjectRepository(Preference)
     private readonly preferenceRepository: Repository<Preference>,
+    @InjectRepository(Food)
+    private readonly foodRepository: Repository<Food>,
+    @InjectRepository(Participants)
+    private readonly participantRepository: Repository<Participants>,
   ) {}
 
   async getReviewSummary(): Promise<FoodRatingSummaryDto[]> {
@@ -73,5 +80,31 @@ export class PreferenceService {
       description: randomTop.description,
       imgUrl: randomTop.imageUrl,
     };
+  }
+
+  async savePreferences(dto: SubmitPreferenceDto) {
+    const participant = await this.participantRepository.findOne({
+      where: { id: dto.participantId },
+    });
+    if (!participant) throw new NotFoundException('Participant not found');
+
+    const results: Preference[] = [];
+
+    for (const item of dto.preferences) {
+      const food = await this.foodRepository.findOne({
+        where: { id: item.foodId },
+      });
+      if (!food) continue;
+
+      const pref = this.preferenceRepository.create({
+        participant,
+        food,
+        rating: item.preference,
+      });
+
+      results.push(pref);
+    }
+
+    return await this.preferenceRepository.save(results);
   }
 }
