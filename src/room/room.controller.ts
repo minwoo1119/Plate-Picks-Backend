@@ -10,9 +10,9 @@ export class RoomController {
   @Post()
   async createRoom(
     @Body() createRoomDto: CreateRoomDto,
-  ): Promise<{ code: string }> {
+  ): Promise<{ id: string; code: string }> {
     const room = await this.roomService.createRoom(createRoomDto);
-    return { code: room.code };
+    return { id: room.id, code: room.code };
   }
 
   @Get(':code')
