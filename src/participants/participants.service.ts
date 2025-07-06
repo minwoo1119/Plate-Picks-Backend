@@ -65,8 +65,9 @@ export class ParticipantsService {
   async completeParticipant(
     participantId: string,
   ): Promise<completeParticipantsDto> {
-    const participant = await this.participantsRepository.findOneBy({
-      id: participantId,
+    const participant = await this.participantsRepository.findOne({
+      where: { id: participantId },
+      relations: ['room'],
     });
 
     if (!participant) {
