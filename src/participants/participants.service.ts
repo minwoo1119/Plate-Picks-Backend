@@ -5,6 +5,7 @@ import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { Room } from 'src/room/room.entity';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
 import { completeParticipantsDto } from './dto/complete-participants.dto';
+import { BadRequestException } from '@nestjs/common';
 
 export class ParticipantsService {
   constructor(
@@ -22,6 +23,14 @@ export class ParticipantsService {
 
     if (!room) {
       throw new Error('Room Not Fount');
+    }
+
+    const count = await this.participantsRepository.count({
+      where: { room: { id: room.id } },
+    });
+
+    if (count >= room.total_participants) {
+      throw new BadRequestException('이미 가득 찬 방입니다.');
     }
 
     const participant = this.participantsRepository.create({
