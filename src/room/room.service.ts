@@ -18,22 +18,22 @@ export class RoomService {
     return this.roomRepository.save(room);
   }
 
-  async findByCode(code: string): Promise<Room | null> {
-    return this.roomRepository.findOne({ where: { code } });
+  async findById(id: string): Promise<Room | null> {
+    return this.roomRepository.findOne({ where: { id } });
   }
 
   private generateCode(): string {
     return Math.random().toString(36).substring(2, 8).toUpperCase();
   }
 
-  async getRoomStatus(code: string) {
+  async getRoomStatus(id: string) {
     const room = await this.roomRepository.findOne({
-      where: { code },
+      where: { id },
       relations: ['participants'],
     });
 
     if (!room) {
-      throw new NotFoundException(`Room with code ${code} not found`);
+      throw new NotFoundException(`Room with id ${id} not found`);
     }
 
     const total = room.total_participants;
@@ -46,5 +46,18 @@ export class RoomService {
       completed_participants: completed,
       all_completed: total === joined && total === completed,
     };
+  }
+
+  async getRoomParticipants(id: string) {
+    const room = await this.roomRepository.findOne({
+      where: { id },
+      relations: ['participants'],
+    });
+
+    if (!room) {
+      throw new NotFoundException(`Room with id ${id} not found`);
+    }
+
+    return room.participants;
   }
 }

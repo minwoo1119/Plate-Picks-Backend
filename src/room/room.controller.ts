@@ -10,18 +10,23 @@ export class RoomController {
   @Post()
   async createRoom(
     @Body() createRoomDto: CreateRoomDto,
-  ): Promise<{ code: string }> {
+  ): Promise<{ id: string; code: string }> {
     const room = await this.roomService.createRoom(createRoomDto);
-    return { code: room.code };
+    return { id: room.id, code: room.code };
   }
 
-  @Get(':code')
-  async getRoom(@Param('code') code: string): Promise<Room | null> {
-    return this.roomService.findByCode(code);
+  @Get(':id')
+  async getRoom(@Param('id') id: string): Promise<Room | null> {
+    return this.roomService.findById(id);
   }
 
-  @Get(':code/status')
-  async getRoomStatus(@Param('code') code: string) {
-    return this.roomService.getRoomStatus(code);
+  @Get(':id/status')
+  async getRoomStatus(@Param('id') id: string) {
+    return this.roomService.getRoomStatus(id);
+  }
+
+  @Get('participants/:id')
+  async getAllParticipants(@Param('id') id: string) {
+    return this.roomService.getRoomParticipants(id);
   }
 }

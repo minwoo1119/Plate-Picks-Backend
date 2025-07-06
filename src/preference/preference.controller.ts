@@ -1,7 +1,8 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 
 import { FoodRatingSummaryDto } from './dto/food-rating-summary';
 import { PreferenceService } from './preference.service';
+import { ResultFoodDto } from './dto/result-food.dto';
 
 @Controller('preferences')
 export class PreferenceController {
@@ -10,5 +11,10 @@ export class PreferenceController {
   @Get()
   async getAllReview(): Promise<FoodRatingSummaryDto[]> {
     return await this.preferenceService.getReviewSummary();
+  }
+
+  @Get('result/:roomId')
+  async getResultMenu(@Param('roomId') roomId: string): Promise<ResultFoodDto> {
+    return await this.preferenceService.getResultMenu(roomId);
   }
 }
