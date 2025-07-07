@@ -7,7 +7,11 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://platepicks.netlify.app'],
+    origin: [
+      'http://localhost:5173',
+      'https://platepicks.pics',
+      'https://www.platepicks.pics',
+    ],
     credentials: true,
   });
 
