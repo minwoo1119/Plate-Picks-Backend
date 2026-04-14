@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class CreateParticipantsDto {
+export class JoinByCodeDto {
   @ApiProperty({
     example: '민우',
     description: '참가자 이름',
@@ -10,9 +10,9 @@ export class CreateParticipantsDto {
   name: string;
 
   @ApiProperty({
-    example: 'room-id',
-    description: '내부 방 식별자',
+    example: 'AB12CD',
+    description: '사용자 공유용 초대 코드',
   })
   @IsString()
-  roomId: string;
+  code: string;
 }
