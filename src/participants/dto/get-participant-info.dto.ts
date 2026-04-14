@@ -2,7 +2,7 @@ import { IsBoolean, IsString } from 'class-validator';
 
 export class GetParticipantsDto {
   @IsString()
-  participantId: string;
+  id: string;
   @IsString()
   name: string;
   @IsBoolean()

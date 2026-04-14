@@ -58,6 +58,11 @@ export class RoomService {
       throw new NotFoundException(`Room with id ${id} not found`);
     }
 
-    return room.participants;
+    return room.participants.map((participant) => ({
+      id: participant.id,
+      name: participant.name,
+      completed: participant.completed,
+      joined_at: participant.joined_at,
+    }));
   }
 }

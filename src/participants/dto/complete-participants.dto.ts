@@ -1,4 +1,3 @@
-export class completeParticipantsDto {
-  participantId: string;
-  completed: boolean;
+export class CompleteParticipantsDto {
+  success: boolean;
 }

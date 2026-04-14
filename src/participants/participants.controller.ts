@@ -9,7 +9,7 @@ import {
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
-import { completeParticipantsDto } from './dto/complete-participants.dto';
+import { CompleteParticipantsDto } from './dto/complete-participants.dto';
 
 @Controller('participants')
 export class ParticipantsController {
@@ -18,12 +18,10 @@ export class ParticipantsController {
   @Post()
   async createParticipant(
     @Body() dto: CreateParticipantsDto,
-  ): Promise<{ id: string; name: string; joinedAt: Date }> {
+  ): Promise<{ id: string }> {
     const participant = await this.participantsService.setParticipant(dto);
     return {
       id: participant.id,
-      name: participant.name,
-      joinedAt: participant.joined_at,
     };
   }
 
@@ -42,12 +40,10 @@ export class ParticipantsController {
   @Get('complete/:participantId')
   async completeParticipants(
     @Param('participantId') participantId: string,
-  ): Promise<completeParticipantsDto> {
-    const participant =
-      await this.participantsService.completeParticipant(participantId);
+  ): Promise<CompleteParticipantsDto> {
+    await this.participantsService.completeParticipant(participantId);
     return {
-      participantId: participant.participantId,
-      completed: participant.completed,
+      success: true,
     };
   }
 }

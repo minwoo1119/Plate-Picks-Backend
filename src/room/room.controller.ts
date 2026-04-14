@@ -20,13 +20,13 @@ export class RoomController {
     return this.roomService.findById(id);
   }
 
-  @Get(':id/status')
-  async getRoomStatus(@Param('id') id: string) {
-    return this.roomService.getRoomStatus(id);
+  @Get(':roomId/status')
+  async getRoomStatus(@Param('roomId') roomId: string) {
+    return this.roomService.getRoomStatus(roomId);
   }
 
-  @Get('participants/:id')
-  async getAllParticipants(@Param('id') id: string) {
-    return this.roomService.getRoomParticipants(id);
+  @Get('participants/:roomId')
+  async getAllParticipants(@Param('roomId') roomId: string) {
+    return this.roomService.getRoomParticipants(roomId);
   }
 }

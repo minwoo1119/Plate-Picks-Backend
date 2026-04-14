@@ -21,6 +21,7 @@ export class PreferenceController {
 
   @Post('submit')
   async submitPreferences(@Body() dto: SubmitPreferenceDto) {
-    return await this.preferenceService.savePreferences(dto);
+    await this.preferenceService.savePreferences(dto);
+    return { success: true };
   }
 }

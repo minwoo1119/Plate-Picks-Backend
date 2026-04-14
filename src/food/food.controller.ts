@@ -9,7 +9,12 @@ export class FoodController {
   @Get()
   async getFoods() {
     const foods = await this.foodService.getFoods();
-    return foods;
+    return foods.map((food) => ({
+      id: food.id,
+      name: food.name,
+      description: food.description,
+      imgUrl: food.imageUrl,
+    }));
   }
 
   @Post()

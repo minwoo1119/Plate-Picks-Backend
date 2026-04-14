@@ -88,23 +88,34 @@ export class PreferenceService {
     });
     if (!participant) throw new NotFoundException('Participant not found');
 
-    const results: Preference[] = [];
-
     for (const item of dto.preferences) {
       const food = await this.foodRepository.findOne({
         where: { id: item.foodId },
       });
-      if (!food) continue;
+      if (!food) {
+        throw new NotFoundException(`Food not found: ${item.foodId}`);
+      }
 
-      const pref = this.preferenceRepository.create({
-        participant,
-        food,
-        rating: item.preference,
+      const existing = await this.preferenceRepository.findOne({
+        where: {
+          participant: { id: participant.id },
+          food: { id: food.id },
+        },
       });
 
-      results.push(pref);
-    }
+      if (existing) {
+        existing.rating = item.preference;
+        await this.preferenceRepository.save(existing);
+        continue;
+      }
 
-    return await this.preferenceRepository.save(results);
+      await this.preferenceRepository.save(
+        this.preferenceRepository.create({
+          participant,
+          food,
+          rating: item.preference,
+        }),
+      );
+    }
   }
 }

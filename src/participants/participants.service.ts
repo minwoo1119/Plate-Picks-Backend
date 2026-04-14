@@ -4,8 +4,11 @@ import { Repository } from 'typeorm';
 import { CreateParticipantsDto } from './dto/create-participant.dto';
 import { Room } from 'src/room/room.entity';
 import { GetParticipantsDto } from './dto/get-participant-info.dto';
-import { completeParticipantsDto } from './dto/complete-participants.dto';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { SseService } from 'src/sse/sse.service';
 
 export class ParticipantsService {
@@ -21,11 +24,11 @@ export class ParticipantsService {
 
   async setParticipant(dto: CreateParticipantsDto): Promise<Participants> {
     const room = await this.roomRepository.findOne({
-      where: { id: dto.roomId },
+      where: [{ id: dto.roomId }, { code: dto.roomId }],
     });
 
     if (!room) {
-      throw new Error('Room Not Fount');
+      throw new NotFoundException('Room not found');
     }
 
     const count = await this.participantsRepository.count({
@@ -52,26 +55,28 @@ export class ParticipantsService {
     });
 
     if (!participant) {
-      throw new Error('Participant Not Found');
+      throw new NotFoundException('Participant not found');
     }
 
     return {
-      participantId: participant.id,
+      id: participant.id,
       name: participant.name,
       completed: participant.completed,
     };
   }
 
-  async completeParticipant(
-    participantId: string,
-  ): Promise<completeParticipantsDto> {
+  async completeParticipant(participantId: string): Promise<void> {
     const participant = await this.participantsRepository.findOne({
       where: { id: participantId },
       relations: ['room'],
     });
 
     if (!participant) {
-      throw new Error('No participants found');
+      throw new NotFoundException('Participant not found');
+    }
+
+    if (participant.completed) {
+      throw new ConflictException('Participant already completed');
     }
 
     participant.completed = true;
@@ -82,10 +87,5 @@ export class ParticipantsService {
       type: 'participant-completed',
       participantId: participant.id,
     });
-
-    return {
-      participantId: participant.id,
-      completed: participant.completed,
-    };
   }
 }
