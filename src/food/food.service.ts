@@ -31,6 +31,10 @@ export class FoodService {
     const limit = dto.limit ?? 10;
 
     const scoredFoods = foods
+      .map((food) => {
+        const normalizedFood = this.normalizeFoodMetadata(food);
+        return normalizedFood;
+      })
       .filter((food) => !excludedCategories.has(food.category))
       .map((food) => {
         let score = 0;
@@ -165,5 +169,21 @@ export class FoodService {
       default:
         return '식사 시간';
     }
+  }
+
+  private normalizeFoodMetadata(food: Food): Food {
+    food.category = food.category ?? 'korean';
+    food.mealTimes =
+      Array.isArray(food.mealTimes) && food.mealTimes.length > 0
+        ? food.mealTimes
+        : ['lunch', 'dinner'];
+    food.minBudget = food.minBudget ?? 10000;
+    food.maxBudget = food.maxBudget ?? 18000;
+    food.spiceLevel = food.spiceLevel ?? 1;
+    food.quickMeal = food.quickMeal ?? false;
+    food.shareable = food.shareable ?? false;
+    food.deliveryFriendly = food.deliveryFriendly ?? true;
+
+    return food;
   }
 }
