@@ -1,16 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
 
-export class GetParticipantsDto {
+export class ParticipantSummaryDto {
   @ApiProperty({ example: 'participant-id' })
-  @IsString()
   id: string;
 
   @ApiProperty({ example: '민우' })
-  @IsString()
   name: string;
 
-  @ApiProperty({ example: false })
-  @IsBoolean()
+  @ApiProperty({ example: true })
   completed: boolean;
+
+  @ApiProperty({ example: '2026-04-14T12:00:00.000Z' })
+  joined_at: Date;
 }
