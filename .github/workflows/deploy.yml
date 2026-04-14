@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: plate-picks-production
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -18,17 +22,23 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -p 22 YOUR_SERVER_IP >> ~/.ssh/known_hosts
+          ssh-keyscan -p "${{ secrets.SERVER_PORT }}" "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Test SSH connection
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p 22 -o StrictHostKeyChecking=yes minwoo@YOUR_SERVER_IP "echo SSH_OK"
+          ssh -i ~/.ssh/id_ed25519 \
+            -p "${{ secrets.SERVER_PORT }}" \
+            -o StrictHostKeyChecking=yes \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            "echo SSH_OK"
 
       - name: Deploy to server
         run: |
-          ssh -i ~/.ssh/id_ed25519 -p 22 minwoo@YOUR_SERVER_IP << 'EOF'
+          ssh -i ~/.ssh/id_ed25519 \
+            -p "${{ secrets.SERVER_PORT }}" \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" << EOF
             set -euxo pipefail
-            cd /home/minwoo/Plate-Picks-Backend
+            cd "${{ secrets.PLATE_PICKS_DIR }}"
             git fetch origin
             git checkout main
             git reset --hard origin/main
