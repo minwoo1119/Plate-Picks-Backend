@@ -50,35 +50,73 @@ export class PreferenceService {
       .where('room.id = :roomId', { roomId })
       .getMany();
 
-    const scoreMap = new Map<string, { food: Food; score: number }>();
+    const scoreMap = new Map<
+      string,
+      { food: Food; score: number; good: number; soso: number; bad: number }
+    >();
 
     for (const pref of preferences) {
       const foodId = pref.food.id;
-      const currentScore = scoreMap.get(foodId)?.score ?? 0;
+      const existing = scoreMap.get(foodId) ?? {
+        food: pref.food,
+        score: 0,
+        good: 0,
+        soso: 0,
+        bad: 0,
+      };
+
       const delta =
-        pref.rating === 'Good' ? 2 : pref.rating === 'Soso' ? 0 : -1;
+        pref.rating === 'Good' ? 2 : pref.rating === 'Soso' ? 0 : -3;
+
+      existing.score += delta;
+      if (pref.rating === 'Good') existing.good += 1;
+      if (pref.rating === 'Soso') existing.soso += 1;
+      if (pref.rating === 'Bad') existing.bad += 1;
 
       scoreMap.set(foodId, {
-        food: pref.food,
-        score: currentScore + delta,
+        ...existing,
       });
     }
 
-    const sorted = Array.from(scoreMap.values()).sort(
-      (a, b) => b.score - a.score,
-    );
+    const sorted = Array.from(scoreMap.values())
+      .map((item) => {
+        let adjustedScore = item.score;
 
-    const topTwo = sorted.slice(0, 2);
+        if (item.bad === 0) adjustedScore += 2;
+        if (item.good >= 2) adjustedScore += 1;
 
-    if (topTwo.length === 0) throw new Error('No preferences found');
+        return {
+          ...item,
+          adjustedScore,
+        };
+      })
+      .sort((a, b) => {
+        if (b.adjustedScore !== a.adjustedScore) {
+          return b.adjustedScore - a.adjustedScore;
+        }
 
-    const randomTop = topTwo[Math.floor(Math.random() * topTwo.length)].food;
+        if (a.bad !== b.bad) {
+          return a.bad - b.bad;
+        }
+
+        if (b.good !== a.good) {
+          return b.good - a.good;
+        }
+
+        return a.food.name.localeCompare(b.food.name, 'ko');
+      });
+
+    if (sorted.length === 0) {
+      throw new NotFoundException('No preferences found');
+    }
+
+    const bestFood = sorted[0].food;
 
     return {
-      id: randomTop.id,
-      name: randomTop.name,
-      description: randomTop.description,
-      imgUrl: randomTop.imageUrl,
+      id: bestFood.id,
+      name: bestFood.name,
+      description: bestFood.description,
+      imgUrl: bestFood.imageUrl,
     };
   }
 

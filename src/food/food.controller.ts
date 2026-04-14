@@ -13,6 +13,10 @@ import { ErrorResponseDto } from 'src/common/dto/error-response.dto';
 import { SuccessResponseDto } from 'src/common/dto/success-response.dto';
 import { FoodReviewDto } from './dto/food-review.dto';
 import { FoodResponseDto } from './dto/food-response.dto';
+import {
+  RecommendFoodDto,
+  RecommendedFoodResponseDto,
+} from './dto/recommend-food.dto';
 import { FoodService } from './food.service';
 
 @ApiTags('Foods')
@@ -33,7 +37,28 @@ export class FoodController {
       name: food.name,
       description: food.description,
       imgUrl: food.imageUrl,
+      category: food.category,
+      mealTimes: food.mealTimes,
+      minBudget: food.minBudget,
+      maxBudget: food.maxBudget,
+      spiceLevel: food.spiceLevel,
+      quickMeal: food.quickMeal,
+      shareable: food.shareable,
+      deliveryFriendly: food.deliveryFriendly,
     }));
+  }
+
+  @ApiOperation({ summary: '상황 기반 추천 후보 음식 조회' })
+  @ApiOkResponse({
+    type: RecommendedFoodResponseDto,
+    isArray: true,
+  })
+  @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @Post('recommendations')
+  async getRecommendedFoods(
+    @Body() dto: RecommendFoodDto,
+  ): Promise<RecommendedFoodResponseDto[]> {
+    return this.foodService.getRecommendedFoods(dto);
   }
 
   @ApiOperation({ summary: '개별 음식 선호도 저장 또는 수정' })
