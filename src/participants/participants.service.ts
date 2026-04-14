@@ -11,6 +11,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { SseService } from 'src/sse/sse.service';
+import { ParticipantSummaryDto } from './dto/participant-summary.dto';
 
 export class ParticipantsService {
   constructor(
@@ -70,7 +71,17 @@ export class ParticipantsService {
       room,
     });
 
-    return this.participantsRepository.save(participant);
+    const savedParticipant = await this.participantsRepository.save(participant);
+    const participants = await this.getRoomParticipantsSummary(room.id);
+
+    this.sseService.notify(room.id, {
+      type: 'participant-joined',
+      participantId: savedParticipant.id,
+      participantName: savedParticipant.name,
+      participants,
+    });
+
+    return savedParticipant;
   }
 
   async getParticipantsInfo(
@@ -109,9 +120,29 @@ export class ParticipantsService {
     await this.participantsRepository.save(participant);
 
     const roomId = participant.room.id;
+    const participants = await this.getRoomParticipantsSummary(roomId);
+
     this.sseService.notify(roomId, {
       type: 'participant-completed',
       participantId: participant.id,
+      participantName: participant.name,
+      participants,
     });
+  }
+
+  private async getRoomParticipantsSummary(
+    roomId: string,
+  ): Promise<ParticipantSummaryDto[]> {
+    const participants = await this.participantsRepository.find({
+      where: { room: { id: roomId } },
+      order: { joined_at: 'ASC' },
+    });
+
+    return participants.map((participant) => ({
+      id: participant.id,
+      name: participant.name,
+      completed: participant.completed,
+      joined_at: participant.joined_at,
+    }));
   }
 }
