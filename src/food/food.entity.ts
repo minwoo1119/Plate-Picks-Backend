@@ -19,7 +19,7 @@ export class Food {
   @Column({ length: 30, default: 'korean' })
   category: string;
 
-  @Column({ type: 'simple-array', default: 'lunch,dinner' })
+  @Column({ type: 'simple-array', nullable: true })
   mealTimes: string[];
 
   @Column({ default: 10000 })
